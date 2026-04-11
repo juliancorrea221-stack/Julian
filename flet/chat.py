@@ -100,7 +100,8 @@ def main(page: ft.Page):
             ft.dropdown.Option("Colvin"),
             ft.dropdown.Option("Carlos"),
             ft.dropdown.Option("Julian"),
-            ft.dropdown.Option("Almanza")
+            ft.dropdown.Option("Almanza"),
+             ft.dropdown.Option("Edwin")
         ],
         value="Julian",
         width=120,
