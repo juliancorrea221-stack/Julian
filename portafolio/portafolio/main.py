@@ -1,5 +1,5 @@
 import flet as ft
-
+import webbrowser
 class PortafolioWeb:
     def __init__(self, page: ft.Page):
         self.page = page
@@ -75,15 +75,24 @@ class PortafolioWeb:
         self.page.add(layout)
 
     def build_inicio(self):
+        def abrir_github(e):
+             url = "https://github.com/juliancorrea221-stack/Julian"
+             webbrowser.open_new_tab(url.strip())
         return ft.ResponsiveRow([
             ft.Column([
                 ft.Text("Hola, soy Julian Fernando Correa Cardozo", size=45, weight="bold", color=self.color_secundaria),
                 ft.Text("Persona de ing de software en formación, responsable, puntual y buena convivencia en el trabajo" \
                 " en equipo", size=20, color="black"),
-                ft.Text("Correo: juliancorrea221@gmail.com", size=20, color="black"),
-                ft.Text("Numero: 3158399438", size=20, color="black"),
+            ft.Row([ ft.Image(src="gmail.svg", width=40),
+                ft.Text("Correo: juliancorrea221@gmail.com", size=20, color="black")
+            ]),
+            ft.Row([ft.Image(src="telefono.svg", width=40),
+                ft.Text("Numero: 3158399438", size=20, color="black")
+                
+            ]),
                 ft.ElevatedButton("Ver servicios", bgcolor=self.color_primaria, color="white", on_click=lambda _: self.cambiar_pagina(1)),
-                ft.ElevatedButton("Ver resumen", bgcolor=self.color_primaria, color="white", on_click=lambda _: self.cambiar_pagina(2))
+                ft.ElevatedButton("Ver resumen", bgcolor=self.color_primaria, color="white", on_click=lambda _: self.cambiar_pagina(2)),
+                ft.ElevatedButton("Entrar al Github",bgcolor=self.color_primaria,color="white",on_click=abrir_github)
             ], col={"md": 8.2}, alignment="center"),
             ft.Container(
                 content=ft.Image(src="yo.png", border_radius=20, fit="cover"),
@@ -102,7 +111,8 @@ class PortafolioWeb:
                 self.crear_tarjeta("Repositorios git", "github.png"),    
             ]),
             ft.ElevatedButton("Ver inicio", bgcolor=self.color_primaria, color="white", on_click=lambda _: self.cambiar_pagina(0)),
-                ft.ElevatedButton("Ver resumen", bgcolor=self.color_primaria, color="white", on_click=lambda _: self.cambiar_pagina(2))
+            ft.ElevatedButton("Ver resumen", bgcolor=self.color_primaria, color="white", on_click=lambda _: self.cambiar_pagina(2))
+            
         ], scroll="auto")
 
     def build_resumen(self):
@@ -124,7 +134,9 @@ class PortafolioWeb:
             ]),
              ft.ElevatedButton("Ver servicios", bgcolor=self.color_primaria, color="white", on_click=lambda _: self.cambiar_pagina(1)),
              ft.ElevatedButton("Ver inicio", bgcolor=self.color_primaria, color="white", on_click=lambda _: self.cambiar_pagina(0))
-        ], spacing=20)
+              ], spacing=20)
+
+       
 
     def crear_tarjeta(self, titulo, img_src):
         return ft.Container(
