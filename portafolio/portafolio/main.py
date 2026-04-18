@@ -77,8 +77,11 @@ class PortafolioWeb:
     def build_inicio(self):
         return ft.ResponsiveRow([
             ft.Column([
-                ft.Text("Hola, soy ingeniero de software en formacion", size=45, weight="bold", color=self.color_secundaria),
-                ft.Text("Bienvenido a mi espacio de proyectos.", size=20, color="black"),
+                ft.Text("Hola, soy Julian Fernando Correa Cardozo", size=45, weight="bold", color=self.color_secundaria),
+                ft.Text("Persona de ing de software en formación, responsable, puntual y buena convivencia en el trabajo" \
+                " en equipo", size=20, color="black"),
+                ft.Text("Correo: juliancorrea221@gmail.com", size=20, color="black"),
+                ft.Text("Numero: 3158399438", size=20, color="black"),
                 ft.ElevatedButton("Ver servicios", bgcolor=self.color_primaria, color="white", on_click=lambda _: self.cambiar_pagina(1)),
                 ft.ElevatedButton("Ver resumen", bgcolor=self.color_primaria, color="white", on_click=lambda _: self.cambiar_pagina(2))
             ], col={"md": 8.2}, alignment="center"),
