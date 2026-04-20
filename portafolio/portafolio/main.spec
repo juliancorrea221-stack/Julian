@@ -29,10 +29,11 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    version='C:\\Users\\Julian\\AppData\\Local\\Temp\\77759045-80a4-4ff4-8ed8-a3af96ed4179',
 )

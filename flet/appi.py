@@ -1,70 +1,105 @@
 import flet as ft
 import requests
+import re
 
 def main(page: ft.Page):
-    page.title = "Api Hollow knight"
+    page.title = "Hollow Knight Wiki Explorer"
+    page.theme_mode = ft.ThemeMode.DARK
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.scroll = "auto"
 
-    # Input para ID del personaje
-    input_id = ft.TextField(
-        label="ID del personaje",
-        hint_text="Ej: 3",
-        width=200
+    # Input de búsqueda
+    input_name = ft.TextField(
+        label="Personaje de Hallownest",
+        hint_text="Hornet, Grimm, Quirrel...",
+        width=300,
+        on_submit=lambda _: fetch_character(None)
     )
 
-    # Contenedor de resultados
-    result = ft.Column()
+    # El contenedor de resultados (aquí es donde se "limpia" y se "escribe")
+    result = ft.Column(horizontal_alignment=ft.CrossAxisAlignment.CENTER)
 
     def fetch_character(e):
+        # --- PASO CLAVE: Limpiamos lo que había antes ---
         result.controls.clear()
+        page.update() # Actualiza para que el usuario vea que está cargando
         
-        char_id = input_id.value.strip()
-        if not char_id.isdigit():
-            result.controls.append(ft.Text("❌ Ingresa un número válido"))
-            page.update()
-            return
+        query = input_name.value.strip()
+        if not query: return
+
+        headers = {"User-Agent": "Mozilla/5.0"}
+        url = "https://hollowknight.fandom.com/api.php"
         
-        url = f"https://hollowknight.wiki/mw/index.php?title=The_Knight&action=edit{char_id}"
-        
+        params = {
+            "action": "query",
+            "format": "json",
+            "titles": query,
+            "prop": "revisions|pageimages",
+            "rvprop": "content",
+            "pithumbsize": 500,
+            "redirects": 1
+        }
+
         try:
-            response = requests.get(url)
+            response = requests.get(url, params=params, headers=headers)
             data = response.json()
+            pages = data.get("query", {}).get("pages", {})
+            page_id = next(iter(pages))
+            
+            if page_id == "-1":
+                result.controls.append(ft.Text("❌ No encontrado", color="red", size=20))
+            else:
+                content_node = pages[page_id]
+                title = content_node.get("title")
+                raw_text = content_node.get("revisions", [{}])[0].get("*", "")
+                
+                # Limpieza de código Wiki
+                clean = re.sub(r'\{\{.*?\}\}', '', raw_text, flags=re.DOTALL)
+                clean = re.sub(r'<.*?>', '', clean, flags=re.DOTALL)
+                clean = re.sub(r'\[\[(?:[^\]|]*\|)?([^\]|]*)\]\]', r'\1', clean)
+                
+                paragraphs = clean.split('\n')
+                final_desc = "No se encontró descripción."
+                
+                for p in paragraphs:
+                    p = p.strip()
+                    # Filtramos links y textos técnicos cortos
+                    if len(p) > 40 and "youtu" not in p and "|" not in p:
+                        final_desc = p
+                        break 
 
-            # Mostrar datos básicos
-            result.controls.append(ft.Text(f"Nombre: {data.get('name', 'N/A')}", size=20, weight="bold"))
-            result.controls.append(ft.Text(f"Género: {data.get('gender', 'N/A')}"))
-            result.controls.append(ft.Text(f"Estado: {data.get('status', 'N/A')}"))
-            result.controls.append(ft.Text(f"Key: {data.get('description', 'N/A')}"))
+                image_info = content_node.get("thumbnail", {}).get("source")
 
-            # Imagen
-            if data.get("image"):
+                # Agregamos los nuevos elementos al contenedor
+                result.controls.append(ft.Text(title, size=35, weight="bold", color="amber"))
+                
+                if image_info:
+                    result.controls.append(ft.Image(src=image_info, width=300, height=300))
+                
                 result.controls.append(
-                    ft.Image(
-                        src=data["image"],
-                        width=200,
-                        height=200,
-                        fit=ft.ImageFit.CONTAIN
+                    ft.Container(
+                        content=ft.Text(final_desc, size=16, text_align="justify"),
+                        padding=25,
+                        width=550,
+                        bgcolor="#1a1a1a",
+                        border_radius=15,
+                        border=ft.border.all(1, "#333333")
                     )
                 )
 
         except Exception as ex:
-            result.controls.append(ft.Text(f"⚠️ Error: {ex}"))
+            result.controls.append(ft.Text(f"⚠️ Error: {ex}", color="red"))
 
+        # --- PASO CLAVE: Refrescar la página ---
         page.update()
 
-    # Botón
-    btn = ft.ElevatedButton("Buscar personaje", on_click=fetch_character)
+    btn = ft.ElevatedButton("Consultar Diario", on_click=fetch_character)
 
-    # Layout
     page.add(
-        ft.Column([
-            ft.Text("🐜 Hollow knight API App", size=30, weight="bold"),
-            input_id,
-            btn,
-            ft.Divider(),
-            result
-        ])
+        ft.Text("🐜 Hallownest Hunter", size=40, weight="bold"),
+        ft.Row([input_name, btn], alignment=ft.MainAxisAlignment.CENTER),
+        ft.Divider(),
+        result
     )
 
-# Ejecutar app en navegador
 ft.app(target=main)
