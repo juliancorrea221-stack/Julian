@@ -30,7 +30,6 @@ class PortafolioWeb:
             expand=True,
             spacing=0,
             controls=[
-                # Barra de Navegación superior
                 ft.Container(
                     padding=15,
                     bgcolor=self.color_secundaria,
@@ -132,7 +131,6 @@ class PortafolioWeb:
         self.page.update()
 
     def crear_tarjeta(self, titulo, img_src, porcentaje):
-        # Creamos la barra con ancho inicial 0 para la animación
         barra_progreso = ft.Container(
             content=ft.Text(f"{int(porcentaje*100)}%", size=10, color="white", weight="bold"),
             bgcolor="blue",
