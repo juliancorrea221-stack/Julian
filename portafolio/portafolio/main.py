@@ -14,13 +14,13 @@ class PortafolioWeb:
         self.color_primaria = "black"
         self.color_secundaria = "black"
         
-        # Contenedor para los resultados de la API
+        
         self.result_api = ft.Column(horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         
         self.build_ui()
 
     def build_ui(self):
-        # Restauramos todos los frames
+       
         self.frame_inicio = ft.Container(expand=True, padding=20, visible=True, content=self.build_inicio())
         self.frame_servicio = ft.Container(expand=True, padding=20, visible=False, content=self.build_servicio())
         self.frame_resumen = ft.Container(expand=True, padding=20, visible=False, content=self.build_resumen())
@@ -84,7 +84,6 @@ class PortafolioWeb:
         ], scroll="auto")
 
     def build_resumen(self):
-        # Recuperamos tu resumen con iconos
         return ft.Column([
             ft.Text("Mi Resumen", size=35, weight="bold", color="white"),
             ft.Row([ft.Image(src="flet.svg", width=40), ft.Image(src="tkinter.svg", width=25), ft.Text("Crear interfaces gráficas en python con Flet y Tkinter.", size=18, color="white")]),
@@ -141,14 +140,14 @@ class PortafolioWeb:
             height=15,
             border_radius=5,
             alignment=ft.Alignment(0, 0),
-            animate_size=1000, # <--- CAMBIADO AQUÍ
+            animate_size=1000, 
         )
         
         tarjeta = ft.Container(
             content=ft.Column([
                 ft.Image(src=img_src, width=50, height=50),
                 ft.Text(titulo, weight="bold"),
-                ft.Container( # Fondo de la barra
+                ft.Container( 
                     content=barra_progreso,
                     bgcolor="grey300",
                     width=200,
