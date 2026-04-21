@@ -10,7 +10,6 @@ class PortafolioWeb:
         self.page.title = "Mi Portafolio Profesional"
         self.page.theme_mode = ft.ThemeMode.LIGHT
         
-        # Colores originales
         self.page.bgcolor = "bluegrey600"
         self.color_primaria = "black"
         self.color_secundaria = "black"
@@ -74,10 +73,9 @@ class PortafolioWeb:
         ], vertical_alignment="center")
 
     def build_servicio(self):
-        # Creamos las tarjetas y extraemos las barras
         t1, self.bar_html = self.crear_tarjeta("Diseño Web", "html5.svg", 0.25) 
         t2, self.bar_python = self.crear_tarjeta("Python", "python.svg", 0.6)  
-        t3, self.bar_git = self.crear_tarjeta("Repositorios git", "github.png", 0.8) 
+        t3, self.bar_git = self.crear_tarjeta("Repositorios git", "github.png", 0.65) 
 
         return ft.Column([
             ft.Text("Mis Servicios", size=35, weight="bold", color="white"),
@@ -98,7 +96,7 @@ class PortafolioWeb:
     def build_api(self):
         self.input_search = ft.TextField(label="Personaje de Hollow Knight", hint_text="Hornet, Grimm...", width=400, on_submit=self.fetch_wiki_data)
         return ft.Column([
-            ft.Text("API Hollow knight", size=35, weight="bold", color="white"),
+            ft.Text("API Hollow knight🐜", size=35, weight="bold", color="white"),
             ft.Row([self.input_search, ft.ElevatedButton("Buscar", icon="SEARCH", on_click=self.fetch_wiki_data)], alignment="center"),
             ft.Divider(),
             self.result_api 
@@ -168,19 +166,6 @@ class PortafolioWeb:
         self.frame_resumen.visible = (index == 2)
         self.frame_api.visible = (index == 3)
         
-        # Si entramos a servicios, animamos las barras
-        if index == 1:
-            self.page.update() # Primero mostramos el frame
-            # Luego asignamos el ancho final (puedes usar px o proporcional)
-            self.bar_html.width = 200 * 0.4 
-            self.bar_python.width = 200 * 0.8
-            self.bar_git.width = 200 * 0.7
-        else:
-            # Opcional: Reiniciar a 0 para que se repita la animación al volver
-            self.bar_html.width = 0
-            self.bar_python.width = 0
-            self.bar_git.width = 0
-            
         self.page.update()
 def main(page: ft.Page):
     PortafolioWeb(page)
