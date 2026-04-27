@@ -30,6 +30,7 @@ class red_social:
         {"nombre": "Despertar 5AM", "puntos": 15},
         ]
         self.ultimo_usuario = None
+        self.usuario_en_grupo = False
         
         # Iniciamos con el Login
         self.mostrar_login()
@@ -220,18 +221,25 @@ class red_social:
             self.page.update()
 
         def unirse(grupo):
+            if self.usuario_en_grupo:
+                self.page.snack_bar = ft.SnackBar(
+                    ft.Text("Ya estás en un grupo")
+                )
+                self.page.snack_bar.open = True
+                self.page.update()
+                return
+
             if grupo["miembros"] < grupo["capacidad"]:
                 grupo["miembros"] += 1
-                self.grupo_actual = grupo  # 👈 guardamos el grupo
+                self.grupo_actual = grupo
+                self.usuario_en_grupo = True
 
                 self.page.snack_bar = ft.SnackBar(
                     ft.Text(f"Entraste a {grupo['nombre']}")
                 )
                 self.page.snack_bar.open = True
 
-                # 👇 CAMBIAMOS AUTOMÁTICAMENTE A LA VISTA DEL GRUPO
                 self.abrir_chat_grupo()
-
             else:
                 self.page.snack_bar = ft.SnackBar(
                     ft.Text("Este grupo ya está lleno")
@@ -256,7 +264,13 @@ class red_social:
     def abrir_chat_grupo(self):
         self.page.clean()
         ranking = ft.Column()
+        def salir_grupo(e):
+            if self.grupo_actual:
+                self.grupo_actual["miembros"] -= 1
+                self.usuario_en_grupo = False
+                self.grupo_actual = None
 
+            self.volver_inicio()
         def actualizar_ranking():
             ranking.controls.clear()
 
@@ -320,7 +334,7 @@ class red_social:
                     bgcolor=self.color_secundaria,
                     content=ft.Row([
                         ft.Text(self.grupo_actual["nombre"], color="white", size=20),
-                        ft.TextButton("Salir", on_click=lambda _: self.volver_inicio(), style=ft.ButtonStyle(color="white"))
+                        ft.TextButton("Salir",on_click=salir_grupo,style=ft.ButtonStyle(color="white"))
                     ], alignment="spaceBetween")
                 ),
                 ft.Text("Ranking del grupo", color="green", size=18),
