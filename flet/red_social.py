@@ -1,11 +1,12 @@
 import flet as ft
+import random
 
 class red_social:
     def __init__(self, page: ft.Page):
         self.page = page
         self.page.padding = 0
         self.page.title = "Focus routine"
-        self.page.theme_mode = ft.ThemeMode.DARK # Cambiado a Dark para que combine con el fondo negro
+        self.page.theme_mode = ft.ThemeMode.DARK 
         
         self.page.bgcolor = "black"
         self.color_primaria = "black"
@@ -28,6 +29,7 @@ class red_social:
         {"nombre": "Leer 20 páginas", "puntos": 5},
         {"nombre": "Despertar 5AM", "puntos": 15},
         ]
+        self.ultimo_usuario = None
         
         # Iniciamos con el Login
         self.mostrar_login()
@@ -280,14 +282,37 @@ class red_social:
         )
 
         def enviar(e):
-            if input_mensaje.value.strip() != "":
-                mensajes.controls.append(
-                    ft.Text(f"Tú: {input_mensaje.value}", color="white")
-                )
-                input_mensaje.value = ""
-                actualizar_ranking()
-                self.page.update()
+         if input_mensaje.value.strip() != "":
+            texto = input_mensaje.value
 
+            mensajes.controls.append(
+                ft.Text(f"Tú: {texto}", color="white")
+            )
+
+            input_mensaje.value = ""
+
+            # 👇 RESPUESTA AUTOMÁTICA SIMULADA
+
+            usuarios=[
+                "Ana",
+                "Luis",
+                "Eduardo"
+            ]
+            respuestas_por_usuario = {
+                "Ana": ["Buen progreso 🔥", "Vas muy bien 💪", "Sigue así"],
+                "Luis": ["Disciplina 💯", "No pares", "Concéntrate"],
+                "Eduardo": ["Vamos fuerte 💪", "Hoy toca duro 🔥", "Actitud"]
+            }
+
+            usuario = random.choice(usuarios)
+            respuesta = random.choice(respuestas_por_usuario[usuario])
+
+            self.ultimo_usuario = usuario
+            mensajes.controls.append(
+                ft.Text(f"{usuario}: {respuesta}", color="green")
+            )
+            actualizar_ranking()
+            self.page.update()
         self.page.add(
             ft.Column([
                 ft.Container(
@@ -315,7 +340,8 @@ class red_social:
                 ])
             ], expand=True)
         )
-              
+        
+        actualizar_ranking()      
         self.page.update()
 
     def build_perfil(self):
