@@ -335,5 +335,5 @@ class red_social:
 def main(page: ft.Page):
     red_social(page)
     page.scroll = ft.ScrollMode.AUTO
-    
+    page.window.icon = "logo.ico"  
 ft.app(target=main)
