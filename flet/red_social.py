@@ -6,8 +6,7 @@ class red_social:
         self.page = page
         self.page.padding = 0
         self.page.title = "Focus routine"
-        self.page.theme_mode = ft.ThemeMode.DARK 
-        
+        self.page.theme_mode = ft.ThemeMode.DARK     
         self.page.bgcolor = "black"
         self.color_primaria = "black"
         self.color_secundaria = "green800"
@@ -30,25 +29,19 @@ class red_social:
         {"nombre": "Despertar 5AM", "puntos": 15},
         ]
         self.ultimo_usuario = None
-        self.usuario_en_grupo = False
-        
-        # Iniciamos con el Login
+        self.usuario_en_grupo = False       
         self.mostrar_login()
 
     def mostrar_login(self):
-        self.page.clean()
-        
+        self.page.clean()  
         self.page.vertical_alignment = "center"
         self.page.horizontal_alignment = "center"
         self.page.bgcolor = "black"
-
-        # Definimos los campos como variables de la clase (self)
         self.user_tf = ft.TextField(label="Usuario", width=300, border_color="green", color="white")
         self.pass_tf = ft.TextField(label="Contraseña", password=True, width=300, border_color="green", color="white")
 
         def validar(e):
             if self.user_tf.value == "uribista" and self.pass_tf.value == "premium":
-                # Antes de ir al dashboard, reseteamos la alineación de la página
                 self.page.vertical_alignment = "start" 
                 self.page.horizontal_alignment = "start"
                 self.page.clean()
@@ -67,15 +60,12 @@ class red_social:
             ft.ElevatedButton("Entrar", on_click=validar, bgcolor="green800", color="white"),
              
         )
-        
-        # Forzamos la actualización
         self.page.update()
+
     def abrir_nueva_ventana(self, e):
         self.page.clean() 
-        # Restablecemos alineación por si venimos del login
         self.page.vertical_alignment = "start"
-        self.page.horizontal_alignment = "start"
-        
+        self.page.horizontal_alignment = "start" 
         barra_superior = ft.Container(
             padding=15,
             bgcolor=self.color_secundaria,
@@ -116,8 +106,7 @@ class red_social:
         self.frame_inicio = ft.Container(expand=True, padding=20, visible=True, content=self.build_inicio())
         self.frame_retos = ft.Container(expand=True, padding=20, visible=False, content=self.build_retos())
         self.frame_grupos = ft.Container(expand=True, padding=20, visible=False, content=self.build_grupos())
-        self.frame_perfil = ft.Container(expand=True, padding=20, visible=False, content=self.build_perfil())
-        
+        self.frame_perfil = ft.Container(expand=True, padding=20, visible=False, content=self.build_perfil())  
         layout = ft.Column(
             expand=True,
             spacing=0,
@@ -147,7 +136,7 @@ class red_social:
             ]
         )
         self.page.add(layout)
-        self.page.update() # Importante actualizar al construir la UI principal
+        self.page.update() 
     
     def build_inicio(self):
         return ft.Column([
@@ -161,14 +150,11 @@ class red_social:
         def completar(reto):
             self.usuario["puntos"] += reto["puntos"]
             self.usuario["retos_completados"] += 1
-
             self.page.snack_bar = ft.SnackBar(
                 ft.Text(f"+{reto['puntos']} puntos")
             )
             self.page.snack_bar.open = True
-
             self.page.update()
-
         for reto in self.retos:
             lista.controls.append(
                 ft.Row([
@@ -180,7 +166,6 @@ class red_social:
                     )
                 ], alignment="spaceBetween")
             )
-
         return ft.Column([
             ft.Text("Retos diarios", size=30, color="white"),
             lista
@@ -192,8 +177,6 @@ class red_social:
         def buscar(e):
             texto = self.buscador.value.lower()
             self.lista_grupos.controls.clear()
-
-
             for grupo in self.grupos_disponibles:
                 if texto in grupo["nombre"].lower():
 
@@ -217,7 +200,6 @@ class red_social:
                             )
                         ], alignment="spaceBetween")
                     )
-
             self.page.update()
 
         def unirse(grupo):
@@ -228,7 +210,6 @@ class red_social:
                 self.page.snack_bar.open = True
                 self.page.update()
                 return
-
             if grupo["miembros"] < grupo["capacidad"]:
                 grupo["miembros"] += 1
                 self.grupo_actual = grupo
@@ -245,16 +226,13 @@ class red_social:
                     ft.Text("Este grupo ya está lleno")
                 )
                 self.page.snack_bar.open = True
-
             self.page.update()
-
         self.buscador = ft.TextField(
             label="Buscar grupos",
             border_color="green",
             color="white",
             on_change=buscar
         )
-
         return ft.Column([
             ft.Text("Gremios", size=30, weight="bold", color="white"),
             self.buscador,
@@ -269,26 +247,20 @@ class red_social:
                 self.grupo_actual["miembros"] -= 1
                 self.usuario_en_grupo = False
                 self.grupo_actual = None
-
             self.volver_inicio()
         def actualizar_ranking():
             ranking.controls.clear()
-
-            # Simulación de otros usuarios
             jugadores = [
                 {"nombre": "Ana", "puntos": 30},
                 {"nombre": "Luis", "puntos": 20},
                 self.usuario
             ]
-
             jugadores_ordenados = sorted(jugadores, key=lambda x: x["puntos"], reverse=True)
-
             for i, j in enumerate(jugadores_ordenados):
                 ranking.controls.append(
                     ft.Text(f"{i+1}. {j['nombre']} - {j['puntos']} pts", color="white")
                 )
         mensajes = ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)
-
         input_mensaje = ft.TextField(
             hint_text="Escribe un mensaje...",
             expand=True,
@@ -298,15 +270,10 @@ class red_social:
         def enviar(e):
          if input_mensaje.value.strip() != "":
             texto = input_mensaje.value
-
             mensajes.controls.append(
                 ft.Text(f"Tú: {texto}", color="white")
             )
-
             input_mensaje.value = ""
-
-            # 👇 RESPUESTA AUTOMÁTICA SIMULADA
-
             usuarios=[
                 "Ana",
                 "Luis",
@@ -317,10 +284,8 @@ class red_social:
                 "Luis": ["Disciplina 💯", "No pares", "Concéntrate"],
                 "Eduardo": ["Vamos fuerte 💪", "Hoy toca duro 🔥", "Actitud"]
             }
-
             usuario = random.choice(usuarios)
             respuesta = random.choice(respuestas_por_usuario[usuario])
-
             self.ultimo_usuario = usuario
             mensajes.controls.append(
                 ft.Text(f"{usuario}: {respuesta}", color="green")
@@ -338,12 +303,9 @@ class red_social:
                     ], alignment="spaceBetween")
                 ),
                 ft.Text("Ranking del grupo", color="green", size=18),
-                ranking,  # 👈 AQUI LO AGREGAS
-
+                ranking, 
                 ft.Divider(color="white"),
-
                 mensajes,
-
                 ft.Row([
                     input_mensaje,
                     ft.IconButton(
@@ -354,7 +316,6 @@ class red_social:
                 ])
             ], expand=True)
         )
-        
         actualizar_ranking()      
         self.page.update()
 
