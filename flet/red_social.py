@@ -51,7 +51,6 @@ class red_social:
                 self.page.snack_bar.open = True
                 self.page.update()
 
-        # Agregamos los controles directamente a la página
         self.page.add(
             ft.Text("Focus Routine", size=40, weight="bold", color="green"),
             ft.Text("Inicia sesión para continuar", color="white"),
@@ -63,45 +62,63 @@ class red_social:
         self.page.update()
 
     def abrir_nueva_ventana(self, e):
-        self.page.clean() 
-        self.page.vertical_alignment = "start"
-        self.page.horizontal_alignment = "start" 
+        self.page.clean()
+        self.info_general = ft.Container(visible=True, content=self.vista_info())
+        self.info_extra = ft.Container(visible=False, content=self.vista_extra())
+
+        def cambiar_info(index):
+            self.info_general.visible = (index == 0)
+            self.info_extra.visible = (index == 1)
+            self.page.update()
+
         barra_superior = ft.Container(
-            padding=15,
-            bgcolor=self.color_secundaria,
-            content=ft.Row([
-                ft.Text("Información del Proyecto", color="white", weight="bold", size=20),
-            ], alignment="spaceBetween")
+        padding=15,
+        bgcolor=self.color_secundaria,
+        expand=True,  # 🔥 importante para que ocupe todo el ancho
+        content=ft.Row(
+            [
+                ft.Text("Información del Proyecto", color="white", size=20),
+
+                ft.Row(  # 👈 botones a la derecha
+                    [
+                        ft.TextButton("General", on_click=lambda _: cambiar_info(0), style=ft.ButtonStyle(color="white")),
+                        ft.TextButton("Más info", on_click=lambda _: cambiar_info(1), style=ft.ButtonStyle(color="white")),
+                        ft.TextButton("Volver", on_click=lambda _: self.volver_inicio(), style=ft.ButtonStyle(color="white")),
+                    ],
+                    alignment=ft.MainAxisAlignment.END
+                )
+            ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN  # 🔥 separa izquierda/derecha
+            )
         )
         self.page.add(
             ft.Column(
                 expand=True,
-                spacing=0,
                 controls=[
                     barra_superior,
-                    ft.Container(    
-                        padding=20,
-                        content=ft.Column([
-                            ft.Text("Información", size=40, color="green", weight="bold"),
-                            ft.Text("Creador proyecto:", size=30, color="white"),
-                            ft.Container(
-                                # Asegúrate de que "yo.png" esté en la misma carpeta
-                                content=ft.Image(src="yo.png", border_radius=20, fit="cover"), 
-                                height=400
-                            ),
-                            ft.Text("Julian Fernando Correa Cardozo", size=30, color="white"),
-                            ft.ElevatedButton("Volver", on_click=lambda _: self.volver_inicio()) 
-                        ], scroll=ft.ScrollMode.AUTO)
-                    )
+                    self.info_general,
+                    self.info_extra
                 ]
             )
         )
         self.page.update()
+    def vista_info(self):
+        return ft.Column([
+            ft.Text("Información", size=40, color="green"),
+            ft.Text("Creador proyecto:", color="white"),
+            ft.Image(src="yo.png", height=300),
+            ft.Text("Julian Fernando Correa Cardozo", color="white"),
+        ])
 
+    def vista_extra(self):
+        return ft.Column([
+            ft.Text("Detalles extra", size=40, color="green"),
+            ft.Text("Aquí puedes poner más info del proyecto", color="white"),
+        ])
     def volver_inicio(self):
         self.page.clean()
         self.build_ui() 
-
+    
     def build_ui(self):
         self.frame_inicio = ft.Container(expand=True, padding=20, visible=True, content=self.build_inicio())
         self.frame_retos = ft.Container(expand=True, padding=20, visible=False, content=self.build_retos())
