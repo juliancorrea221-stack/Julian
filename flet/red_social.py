@@ -1,5 +1,8 @@
 import flet as ft
 import random
+import webbrowser
+import requests
+import re
 
 class red_social:
     def __init__(self, page: ft.Page):
@@ -56,7 +59,7 @@ class red_social:
             ft.Text("Inicia sesión para continuar", color="white"),
             self.user_tf,
             self.pass_tf,
-            ft.ElevatedButton("Entrar", on_click=validar, bgcolor="green800", color="white"),
+            ft.ElevatedButton("Entrar", on_click=validar,bgcolor="green", color="white"),
              
         )
         self.page.update()
@@ -75,12 +78,12 @@ class red_social:
         barra_superior = ft.Container(
         padding=15,
         bgcolor=self.color_secundaria,
-        expand=True,  # 🔥 importante para que ocupe todo el ancho
+        expand=True,  
         content=ft.Row(
             [
                 ft.Text("Información del Proyecto", color="white", size=20),
 
-                ft.Row(  # 👈 botones a la derecha
+                ft.Row(  
                     [
                         ft.TextButton("Inicio", on_click=lambda _: cambiar_info(0), style=ft.ButtonStyle(color="white")),
                         ft.TextButton("Servicios", on_click=lambda _: cambiar_info(1), style=ft.ButtonStyle(color="white")),
@@ -106,23 +109,65 @@ class red_social:
         )
         self.page.update()
     def inicio(self):
-        return ft.Column([
-            ft.Text("Información", size=40, color="green"),
-            ft.Text("Creador proyecto:", color="white"),
-            ft.Image(src="yo.png", height=300),
-            ft.Text("Julian Fernando Correa Cardozo", color="white"),
-        ])
+        def abrir_github(e):
+             webbrowser.open_new_tab("https://github.com/juliancorrea221-stack/Julian")
+        
+        return ft.ResponsiveRow([
+            ft.Column([
+                ft.Text("Hola, soy Julian Fernando Correa Cardozo", size=45, weight="bold", color="green"),
+                ft.Text("Persona de ing de software en formación, responsable, puntual y buena convivencia en el trabajo en equipo", size=20, color="white"),
+                ft.Row([ft.Image(src="gmail.svg", width=40,color="green"), ft.Text("Correo: juliancorrea221@gmail.com", size=20, color="white")]),
+                ft.Row([ft.Image(src="telefono.svg", width=40,color="green"), ft.Text("Numero: 3158399438", size=20, color="white")]),
+                ft.ElevatedButton("Entrar al Github", bgcolor="green", color="white", on_click=abrir_github)
+            ], col={"md": 8.2}, alignment="center"),
+            ft.Container(content=ft.Image(src="yo.png", border_radius=20, fit="cover"), col={"md": 3}, height=400)
+        ], vertical_alignment="center")
 
     def servicios(self):
+        t1, self.bar_html = self.crear_tarjeta("Diseño Web", "html5.svg", 0.25) 
+        t2, self.bar_python = self.crear_tarjeta("Python", "python.svg", 0.6)  
+        t3, self.bar_git = self.crear_tarjeta("Repositorios git", "github.png", 0.65) 
+
         return ft.Column([
-            ft.Text("Servicios", size=40, color="green"),
-            ft.Text("Aquí puedes poner más info del proyecto", color="white"),
-        ])
+            ft.Text("Mis Servicios", size=35, weight="bold", color="green"),
+            ft.ResponsiveRow([t1, t2, t3]),
+            ft.ElevatedButton("Ver inicio", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(0)),
+        ], scroll="auto")
+    
+    def crear_tarjeta(self, titulo, img_src, porcentaje):
+        barra_progreso = ft.Container(
+            content=ft.Text(f"{int(porcentaje*100)}%", size=10, color="black", weight="bold"),
+            bgcolor="white",
+            width=0, 
+            height=15,
+            border_radius=5,
+            alignment=ft.Alignment(0, 0),
+            animate_size=1000, 
+        )      
+        tarjeta = ft.Container(
+            content=ft.Column([
+                ft.Image(src=img_src, width=50, height=50),
+                ft.Text(titulo, weight="bold"),
+                ft.Container( 
+                    content=barra_progreso,
+                    bgcolor="green",
+                    width=200,
+                    height=15,
+                    border_radius=5,
+                )
+            ], horizontal_alignment="center"),
+            bgcolor="green", padding=20, border_radius=10, col={"sm": 4}
+        )
+        return tarjeta, barra_progreso
+    
     def resumen(self):
         return ft.Column([
-            ft.Text("Resumen", size=40, color="green"),
-            ft.Text("Aquí puedes poner más info del proyecto", color="white"),
-        ])
+            ft.Text("Mi Resumen", size=35, weight="bold", color="green"),
+            ft.Row([ft.Image(src="flet.svg", width=40,color="white"), ft.Image(src="tkinter.svg", width=25,color="white"), ft.Text("Crear interfaces gráficas en python con Flet y Tkinter.", size=18, color="white")]),
+            ft.Row([ft.Image(src="algoritmo.png", width=40,color="white"), ft.Text("Comprendimiento de los algoritmos", size=18, color="white")]),
+            ft.Row([ft.Image(src="html5.svg", width=40,color="white"), ft.Image(src="github.png", width=40), ft.Text("Gestión de versiones", size=18, color="white")]),
+            ft.ElevatedButton("Ver servicios", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(1)),
+        ], spacing=20)
     def volver_inicio(self):
         self.page.clean()
         self.build_ui() 
@@ -346,9 +391,9 @@ class red_social:
 
     def build_perfil(self):
         return ft.Column([
-            ft.Text("Perfil", size=30, weight="bold", color="white"),
-            ft.ElevatedButton("Créditos", on_click=self.abrir_nueva_ventana),
-            ft.ElevatedButton("Cerrar Sesión", on_click=lambda _: self.mostrar_login(), color="red")
+            ft.Text("Perfil", size=30, weight="bold",color="white"),
+            ft.ElevatedButton("Créditos", on_click=self.abrir_nueva_ventana,bgcolor="green",color="white"),
+            ft.ElevatedButton("Cerrar Sesión", on_click=lambda _: self.mostrar_login(),bgcolor="green", color="white")
         ])
     
     def cambiar_pagina(self, index):
