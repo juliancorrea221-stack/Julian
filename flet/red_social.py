@@ -63,12 +63,13 @@ class red_social:
 
     def abrir_nueva_ventana(self, e):
         self.page.clean()
-        self.info_general = ft.Container(visible=True, content=self.vista_info())
-        self.info_extra = ft.Container(visible=False, content=self.vista_extra())
-
+        self.info_inicio = ft.Container(visible=True, content=self.inicio())
+        self.info_servicios = ft.Container(visible=False, content=self.servicios())
+        self.info_resumen = ft.Container(visible=False, content=self.resumen())
         def cambiar_info(index):
-            self.info_general.visible = (index == 0)
-            self.info_extra.visible = (index == 1)
+            self.info_inicio.visible = (index == 0)
+            self.info_servicios.visible = (index == 1)
+            self.info_resumen.visible = (index == 2)
             self.page.update()
 
         barra_superior = ft.Container(
@@ -81,8 +82,9 @@ class red_social:
 
                 ft.Row(  # 👈 botones a la derecha
                     [
-                        ft.TextButton("General", on_click=lambda _: cambiar_info(0), style=ft.ButtonStyle(color="white")),
-                        ft.TextButton("Más info", on_click=lambda _: cambiar_info(1), style=ft.ButtonStyle(color="white")),
+                        ft.TextButton("Inicio", on_click=lambda _: cambiar_info(0), style=ft.ButtonStyle(color="white")),
+                        ft.TextButton("Servicios", on_click=lambda _: cambiar_info(1), style=ft.ButtonStyle(color="white")),
+                        ft.TextButton("Resumen", on_click=lambda _: cambiar_info(2), style=ft.ButtonStyle(color="white")),
                         ft.TextButton("Volver", on_click=lambda _: self.volver_inicio(), style=ft.ButtonStyle(color="white")),
                     ],
                     alignment=ft.MainAxisAlignment.END
@@ -96,13 +98,14 @@ class red_social:
                 expand=True,
                 controls=[
                     barra_superior,
-                    self.info_general,
-                    self.info_extra
+                    self.info_inicio,
+                    self.info_servicios,
+                    self.info_resumen,
                 ]
             )
         )
         self.page.update()
-    def vista_info(self):
+    def inicio(self):
         return ft.Column([
             ft.Text("Información", size=40, color="green"),
             ft.Text("Creador proyecto:", color="white"),
@@ -110,9 +113,14 @@ class red_social:
             ft.Text("Julian Fernando Correa Cardozo", color="white"),
         ])
 
-    def vista_extra(self):
+    def servicios(self):
         return ft.Column([
-            ft.Text("Detalles extra", size=40, color="green"),
+            ft.Text("Servicios", size=40, color="green"),
+            ft.Text("Aquí puedes poner más info del proyecto", color="white"),
+        ])
+    def resumen(self):
+        return ft.Column([
+            ft.Text("Resumen", size=40, color="green"),
             ft.Text("Aquí puedes poner más info del proyecto", color="white"),
         ])
     def volver_inicio(self):
