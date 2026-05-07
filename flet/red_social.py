@@ -69,10 +69,12 @@ class red_social:
         self.info_inicio = ft.Container(visible=True, content=self.inicio())
         self.info_servicios = ft.Container(visible=False, content=self.servicios())
         self.info_resumen = ft.Container(visible=False, content=self.resumen())
+        self.info_api = ft.Container(visible=False, content=self.api())
         def cambiar_info(index):
             self.info_inicio.visible = (index == 0)
             self.info_servicios.visible = (index == 1)
             self.info_resumen.visible = (index == 2)
+            self.info_api.visible = (index == 3)
             self.page.update()
 
         barra_superior = ft.Container(
@@ -88,6 +90,7 @@ class red_social:
                         ft.TextButton("Inicio", on_click=lambda _: cambiar_info(0), style=ft.ButtonStyle(color="white")),
                         ft.TextButton("Servicios", on_click=lambda _: cambiar_info(1), style=ft.ButtonStyle(color="white")),
                         ft.TextButton("Resumen", on_click=lambda _: cambiar_info(2), style=ft.ButtonStyle(color="white")),
+                        ft.TextButton("Api", on_click=lambda _: cambiar_info(3), style=ft.ButtonStyle(color="white")),
                         ft.TextButton("Volver", on_click=lambda _: self.volver_inicio(), style=ft.ButtonStyle(color="white")),
                     ],
                     alignment=ft.MainAxisAlignment.END
@@ -104,6 +107,7 @@ class red_social:
                     self.info_inicio,
                     self.info_servicios,
                     self.info_resumen,
+                    self.info_api,
                 ]
             )
         )
@@ -168,6 +172,44 @@ class red_social:
             ft.Row([ft.Image(src="html5.svg", width=40,color="white"), ft.Image(src="github.png", width=40), ft.Text("Gestión de versiones", size=18, color="white")]),
             ft.ElevatedButton("Ver servicios", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(1)),
         ], spacing=20)
+    def api(self):
+        self.input_search = ft.TextField(label="Personaje de Hollow Knight", hint_text="Hornet, Grimm...", width=400, on_submit=self.fetch_wiki_data)
+        return ft.Column([
+            ft.Text("API Hollow knight🐜", size=35, weight="bold", color="green"),
+            ft.Row([self.input_search, ft.ElevatedButton("Buscar", icon="SEARCH", on_click=self.fetch_wiki_data)], alignment="center"),
+            ft.Divider(),
+            self.result_api 
+        ], horizontal_alignment="center", scroll="auto")
+
+    def fetch_wiki_data(self, e):
+        self.result_api.controls.clear()
+        self.page.update()
+        query = self.input_search.value.strip()
+        if not query: return
+        url = "https://hollowknight.fandom.com/api.php"
+        params = {"action": "query", "format": "json", "titles": query, "prop": "revisions|pageimages", "rvprop": "content", "pithumbsize": 500, "redirects": 1}
+        try:
+            res = requests.get(url, params=params, headers={"User-Agent": "Mozilla/5.0"})
+            data = res.json()
+            pages = data.get("query", {}).get("pages", {})
+            page_id = next(iter(pages))
+            if page_id == "-1":
+                self.result_api.controls.append(ft.Text("❌ No encontrado", color="red"))
+            else:
+                content = pages[page_id]
+                raw_text = content.get("revisions", [{}])[0].get("*", "")
+                clean = re.sub(r'\{\{.*?\}\}', '', raw_text, flags=re.DOTALL)
+                clean = re.sub(r'<.*?>', '', clean, flags=re.DOTALL)
+                clean = re.sub(r'\[\[(?:[^\]|]*\|)?([^\]|]*)\]\]', r'\1', clean)
+                paragraphs = [p.strip() for p in clean.split('\n') if len(p.strip()) > 40 and "youtu" not in p]
+                desc = paragraphs[0] if paragraphs else "Sin descripción."
+                img = content.get("thumbnail", {}).get("source")
+                self.result_api.controls.append(ft.Text(content.get("title"), size=30, color="amber", weight="bold"))
+                if img: self.result_api.controls.append(ft.Image(src=img, width=250, border_radius=10))
+                self.result_api.controls.append(ft.Container(content=ft.Text(desc, text_align="justify", color="white", size=16), padding=20, bgcolor="black", border_radius=15, width=550))
+        except Exception as ex:
+            self.result_api.controls.append(ft.Text(f"Error: {ex}", color="red"))
+        self.page.update()
     def volver_inicio(self):
         self.page.clean()
         self.build_ui() 
