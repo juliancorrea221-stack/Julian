@@ -96,7 +96,7 @@ class red_social:
                     alignment=ft.MainAxisAlignment.END
                 )
             ],
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN  # 🔥 separa izquierda/derecha
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN 
             )
         )
         self.page.add(
@@ -118,7 +118,7 @@ class red_social:
         
         return ft.ResponsiveRow([
             ft.Column([
-                ft.Text("Hola, soy Julian Fernando Correa Cardozo", size=45, weight="bold", color="green"),
+                ft.Text("Hola, soy Julian Fernando Correa Cardozo", size=45, weight="bold", color="green400"),
                 ft.Text("Persona de ing de software en formación, responsable, puntual y buena convivencia en el trabajo en equipo", size=20, color="white"),
                 ft.Row([ft.Image(src="gmail.svg", width=40,color="green"), ft.Text("Correo: juliancorrea221@gmail.com", size=20, color="white")]),
                 ft.Row([ft.Image(src="telefono.svg", width=40,color="green"), ft.Text("Numero: 3158399438", size=20, color="white")]),
@@ -133,15 +133,15 @@ class red_social:
         t3, self.bar_git = self.crear_tarjeta("Repositorios git", "github.png", 0.65) 
 
         return ft.Column([
-            ft.Text("Mis Servicios", size=35, weight="bold", color="green"),
+            ft.Text("Mis Servicios", size=35, weight="bold", color="green400"),
             ft.ResponsiveRow([t1, t2, t3]),
             ft.ElevatedButton("Ver inicio", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(0)),
         ], scroll="auto")
     
     def crear_tarjeta(self, titulo, img_src, porcentaje):
         barra_progreso = ft.Container(
-            content=ft.Text(f"{int(porcentaje*100)}%", size=10, color="black", weight="bold"),
-            bgcolor="white",
+            content=ft.Text(f"{int(porcentaje*100)}%", size=10, color="white", weight="bold"),
+            bgcolor="blue300",
             width=0, 
             height=15,
             border_radius=5,
@@ -166,7 +166,7 @@ class red_social:
     
     def resumen(self):
         return ft.Column([
-            ft.Text("Mi Resumen", size=35, weight="bold", color="green"),
+            ft.Text("Mi Resumen", size=35, weight="bold", color="green400"),
             ft.Row([ft.Image(src="flet.svg", width=40,color="white"), ft.Image(src="tkinter.svg", width=25,color="white"), ft.Text("Crear interfaces gráficas en python con Flet y Tkinter.", size=18, color="white")]),
             ft.Row([ft.Image(src="algoritmo.png", width=40,color="white"), ft.Text("Comprendimiento de los algoritmos", size=18, color="white")]),
             ft.Row([ft.Image(src="html5.svg", width=40,color="white"), ft.Image(src="github.png", width=40), ft.Text("Gestión de versiones", size=18, color="white")]),
@@ -175,7 +175,7 @@ class red_social:
     def api(self):
         self.input_search = ft.TextField(label="Personaje de Hollow Knight", hint_text="Hornet, Grimm...", width=400, on_submit=self.fetch_wiki_data)
         return ft.Column([
-            ft.Text("API Hollow knight🐜", size=35, weight="bold", color="green"),
+            ft.Text("API Hollow knight🐜", size=35, weight="bold", color="green400"),
             ft.Row([self.input_search, ft.ElevatedButton("Buscar", icon="SEARCH", on_click=self.fetch_wiki_data)], alignment="center"),
             ft.Divider(),
             self.result_api 
@@ -210,6 +210,7 @@ class red_social:
         except Exception as ex:
             self.result_api.controls.append(ft.Text(f"Error: {ex}", color="red"))
         self.page.update()
+
     def volver_inicio(self):
         self.page.clean()
         self.build_ui() 
@@ -252,7 +253,7 @@ class red_social:
     
     def build_inicio(self):
         return ft.Column([
-            ft.Text("Bienvenido a Focus Routine", size=30, weight="bold", color="white"),
+            ft.Text("Bienvenido a Focus Routine", size=30, weight="bold", color="green400"),
             ft.Row([ft.Image(src="uribista.png", width=60), ft.Text("Contenido principal cargado.", size=18, color="white")]),
         ], spacing=20)
 
@@ -279,7 +280,7 @@ class red_social:
                 ], alignment="spaceBetween")
             )
         return ft.Column([
-            ft.Text("Retos diarios", size=30, color="white"),
+            ft.Text("Retos diarios", size=30, color="green400"),
             lista
         ])
 
@@ -308,6 +309,7 @@ class red_social:
                                 "Lleno" if lleno else "Unirse",
                                 disabled=lleno,
                                 bgcolor="grey" if lleno else "green",
+                                color="white" if lleno else "white",
                                 on_click=lambda e, g=grupo: unirse(g)
                             )
                         ], alignment="spaceBetween")
@@ -346,7 +348,7 @@ class red_social:
             on_change=buscar
         )
         return ft.Column([
-            ft.Text("Gremios", size=30, weight="bold", color="white"),
+            ft.Text("Gremios", size=30, weight="bold", color="green400"),
             self.buscador,
             self.lista_grupos
         ], spacing=20)
@@ -433,7 +435,7 @@ class red_social:
 
     def build_perfil(self):
         return ft.Column([
-            ft.Text("Perfil", size=30, weight="bold",color="white"),
+            ft.Text("Perfil", size=30, weight="bold",color="green400"),
             ft.ElevatedButton("Créditos", on_click=self.abrir_nueva_ventana,bgcolor="green",color="white"),
             ft.ElevatedButton("Cerrar Sesión", on_click=lambda _: self.mostrar_login(),bgcolor="green", color="white")
         ])
