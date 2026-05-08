@@ -13,6 +13,9 @@ class red_social:
         self.page.bgcolor = "black"
         self.color_primaria = "black"
         self.color_secundaria = "green800"
+        self.usuarios = {
+            "uribista": "premium"
+        }
         self.result_api = ft.Column(horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         self.grupo_actual = None
         self.grupos_disponibles = [
@@ -35,35 +38,127 @@ class red_social:
         self.usuario_en_grupo = False       
         self.mostrar_login()
 
+
     def mostrar_login(self):
-        self.page.clean()  
+        self.page.clean()
         self.page.vertical_alignment = "center"
         self.page.horizontal_alignment = "center"
         self.page.bgcolor = "black"
-        self.user_tf = ft.TextField(label="Usuario", width=300, border_color="green", color="white")
-        self.pass_tf = ft.TextField(label="Contraseña", password=True, width=300, border_color="green", color="white")
+
+        self.user_tf = ft.TextField(
+            label="Usuario",
+            width=300,
+            border_color="green",
+            color="white"
+        )
+
+        self.pass_tf = ft.TextField(
+            label="Contraseña",
+            password=True,
+            width=300,
+            border_color="green",
+            color="white"
+        )
 
         def validar(e):
-            if self.user_tf.value == "uribista" and self.pass_tf.value == "premium":
-                self.page.vertical_alignment = "start" 
+            usuario = self.user_tf.value
+            clave = self.pass_tf.value
+            
+            if usuario in self.usuarios and self.usuarios[usuario] == clave:
+
+                self.page.vertical_alignment = "start"
                 self.page.horizontal_alignment = "start"
+
                 self.page.clean()
+
                 self.build_ui()
-            else:
-                self.page.snack_bar = ft.SnackBar(ft.Text("Usuario o clave incorrectos"))
-                self.page.snack_bar.open = True
-                self.page.update()
+
+        def ir_registro(e):
+            self.mostrar_registro()
 
         self.page.add(
-            ft.Text("Focus Routine", size=40, weight="bold", color="green"),
-            ft.Text("Inicia sesión para continuar", color="white"),
+            ft.Text(
+                "Focus Routine",
+                size=40,
+                weight="bold",
+                color="green"
+            ),
+
+            ft.Text(
+                "Inicia sesión para continuar",
+                color="white"
+            ),
+
             self.user_tf,
             self.pass_tf,
-            ft.ElevatedButton("Entrar", on_click=validar,bgcolor="green", color="white"),
-             
+
+            ft.ElevatedButton(
+                "Entrar",
+                on_click=validar,
+                bgcolor="green",
+                color="white"
+            ),
+
+            ft.ElevatedButton(
+                "Crear cuenta",color="white",bgcolor="green",
+                on_click=ir_registro
+            )
         )
+
         self.page.update()
 
+    def mostrar_registro(self):
+        self.page.clean()
+
+        nuevo_user = ft.TextField(
+            label="Nuevo usuario",color="white",border_color="green",
+            width=300
+        )
+
+        nueva_pass = ft.TextField(
+            label="Nueva contraseña",color="white",border_color="green",
+            password=True,
+            width=300
+        )
+
+        def crear_cuenta(e):
+            usuario = nuevo_user.value
+            clave = nueva_pass.value
+
+            if usuario in self.usuarios:
+
+                self.page.snack_bar = ft.SnackBar(
+                    ft.Text("Ese usuario ya existe")
+                )
+
+            else:
+                self.usuarios[usuario] = clave
+
+                self.page.snack_bar = ft.SnackBar(
+                    ft.Text("Cuenta creada correctamente")
+                )
+
+                self.mostrar_login()
+
+            self.page.snack_bar.open = True
+            self.page.update()
+
+        self.page.add(
+            ft.Text(
+                "Crear Cuenta",color="green400",
+                size=30
+            ),
+
+            nuevo_user,
+            nueva_pass,
+
+            ft.ElevatedButton(
+                "Registrarse",color="white",bgcolor="green",
+                on_click=crear_cuenta
+            )
+        )
+
+        self.page.update()
     def abrir_nueva_ventana(self, e):
         self.page.clean()
         self.info_inicio = ft.Container(visible=True, content=self.inicio())
@@ -275,7 +370,7 @@ class red_social:
                     ft.ElevatedButton(
                         "Completar",
                         on_click=lambda e, r=reto: completar(r),
-                        bgcolor="green"
+                        bgcolor="green",color="white",
                     )
                 ], alignment="spaceBetween")
             )
