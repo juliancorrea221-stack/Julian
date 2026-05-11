@@ -14,9 +14,9 @@ class red_social:
         self.color_primaria = "black"
         self.color_secundaria = "green800"
         self.usuarios = {
-            "uribista": "premium"
+            "1": "2"
         }
-        self.result_api = ft.Column(horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+        self.result_creditos = ft.Column(horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         self.grupo_actual = None
         self.grupos_disponibles = [
         {"nombre": "Fitness Hardcore", "miembros": 3, "capacidad": 5},
@@ -164,12 +164,12 @@ class red_social:
         self.info_inicio = ft.Container(visible=True, content=self.inicio())
         self.info_servicios = ft.Container(visible=False, content=self.servicios())
         self.info_resumen = ft.Container(visible=False, content=self.resumen())
-        self.info_api = ft.Container(visible=False, content=self.api())
+        self.info_creditos = ft.Container(visible=False, content=self.creditos())
         def cambiar_info(index):
             self.info_inicio.visible = (index == 0)
             self.info_servicios.visible = (index == 1)
             self.info_resumen.visible = (index == 2)
-            self.info_api.visible = (index == 3)
+            self.info_creditos.visible = (index == 3)
             self.page.update()
 
         barra_superior = ft.Container(
@@ -185,7 +185,7 @@ class red_social:
                         ft.TextButton("Inicio", on_click=lambda _: cambiar_info(0), style=ft.ButtonStyle(color="white")),
                         ft.TextButton("Servicios", on_click=lambda _: cambiar_info(1), style=ft.ButtonStyle(color="white")),
                         ft.TextButton("Resumen", on_click=lambda _: cambiar_info(2), style=ft.ButtonStyle(color="white")),
-                        ft.TextButton("Api", on_click=lambda _: cambiar_info(3), style=ft.ButtonStyle(color="white")),
+                        ft.TextButton("Creditos", on_click=lambda _: cambiar_info(3), style=ft.ButtonStyle(color="white")),
                         ft.TextButton("Volver", on_click=lambda _: self.volver_inicio(), style=ft.ButtonStyle(color="white")),
                     ],
                     alignment=ft.MainAxisAlignment.END
@@ -202,7 +202,7 @@ class red_social:
                     self.info_inicio,
                     self.info_servicios,
                     self.info_resumen,
-                    self.info_api,
+                    self.info_creditos,
                 ]
             )
         )
@@ -213,13 +213,23 @@ class red_social:
         
         return ft.ResponsiveRow([
             ft.Column([
-                ft.Text("Hola, soy Julian Fernando Correa Cardozo", size=45, weight="bold", color="green400"),
-                ft.Text("Persona de ing de software en formación, responsable, puntual y buena convivencia en el trabajo en equipo", size=20, color="white"),
-                ft.Row([ft.Image(src="gmail.svg", width=40,color="green"), ft.Text("Correo: juliancorrea221@gmail.com", size=20, color="white")]),
-                ft.Row([ft.Image(src="telefono.svg", width=40,color="green"), ft.Text("Numero: 3158399438", size=20, color="white")]),
+                ft.Text("Sistema de gestión de grupos y disciplina", size=45, weight="bold", color="green400"),
+                ft.Text("Introducción", size=20, color="white"),
+                ft.Text("Actualmente muchos jóvenes les cuesta mas trabajo mentalmente para desarrollar disciplina" \
+                "con lo que  desarrollare una aplicación tipo red social donde habran grupos en lo que tendran en comun"\
+                "lo que al abarcarse en un entorno positivo dara una emoción de competencia en la que comentaran y"\
+                "subira evidencias para recibir consejos o mensajes positivos, ayudando a largo plazo en un entorno mas adecuado", size=20, color="white"),
+                ft.Text("Problemática", size=20, color="white"),
+                ft.Text("Teniendo en cuenta el anterior contexto,Las plataformas digitales existentes no están diseñadas específicamente para fomentar disciplina"\
+                        " mediante reglas obligatorias. No existe un sistema estructurado donde:"\
+                        "-Se establezcan compromisos periódicos."\
+                        "-Se controle el cumplimiento."\
+                        "-Se generen penalizaciones por inactividad."\
+                        "-Se fomente la competencia saludable dentro de reglas claras."\
+                        "Por lo tanto, se plantea el desarrollo de un sistema que permita crear grupos donde los participantes deban subir evidencias"\
+                        "de progreso en intervalos definidos", size=20, color="white"),
                 ft.ElevatedButton("Entrar al Github", bgcolor="green", color="white", on_click=abrir_github)
             ], col={"md": 8.2}, alignment="center"),
-            ft.Container(content=ft.Image(src="yo.png", border_radius=20, fit="cover"), col={"md": 3}, height=400)
         ], vertical_alignment="center")
 
     def servicios(self):
@@ -267,44 +277,16 @@ class red_social:
             ft.Row([ft.Image(src="html5.svg", width=40,color="white"), ft.Image(src="github.png", width=40), ft.Text("Gestión de versiones", size=18, color="white")]),
             ft.ElevatedButton("Ver servicios", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(1)),
         ], spacing=20)
-    def api(self):
-        self.input_search = ft.TextField(label="Personaje de Hollow Knight", hint_text="Hornet, Grimm...", width=400, on_submit=self.fetch_wiki_data)
+    def creditos(self):
         return ft.Column([
-            ft.Text("API Hollow knight🐜", size=35, weight="bold", color="green400"),
-            ft.Row([self.input_search, ft.ElevatedButton("Buscar", icon="SEARCH", on_click=self.fetch_wiki_data)], alignment="center"),
-            ft.Divider(),
-            self.result_api 
+           ft.Text("Creditos", size=35,weight="bold", color="green400"),
+           ft.Text("Julian Fernando Correa Cardozo", size=25,weight="bold", color="green400"),
+           ft.Container(content=ft.Image(src="yo.png", border_radius=20, fit="cover"), col={"md": 3}, height=400),
+           ft.Row([ft.Image(src="gmail.svg", width=40,color="green"), ft.Text("Correo: juliancorrea221@gmail.com", size=20, color="white")]),
+           ft.Row([ft.Image(src="telefono.svg", width=40,color="green"), ft.Text("Numero: 3158399438", size=20, color="white")])
         ], horizontal_alignment="center", scroll="auto")
 
-    def fetch_wiki_data(self, e):
-        self.result_api.controls.clear()
-        self.page.update()
-        query = self.input_search.value.strip()
-        if not query: return
-        url = "https://hollowknight.fandom.com/api.php"
-        params = {"action": "query", "format": "json", "titles": query, "prop": "revisions|pageimages", "rvprop": "content", "pithumbsize": 500, "redirects": 1}
-        try:
-            res = requests.get(url, params=params, headers={"User-Agent": "Mozilla/5.0"})
-            data = res.json()
-            pages = data.get("query", {}).get("pages", {})
-            page_id = next(iter(pages))
-            if page_id == "-1":
-                self.result_api.controls.append(ft.Text("❌ No encontrado", color="red"))
-            else:
-                content = pages[page_id]
-                raw_text = content.get("revisions", [{}])[0].get("*", "")
-                clean = re.sub(r'\{\{.*?\}\}', '', raw_text, flags=re.DOTALL)
-                clean = re.sub(r'<.*?>', '', clean, flags=re.DOTALL)
-                clean = re.sub(r'\[\[(?:[^\]|]*\|)?([^\]|]*)\]\]', r'\1', clean)
-                paragraphs = [p.strip() for p in clean.split('\n') if len(p.strip()) > 40 and "youtu" not in p]
-                desc = paragraphs[0] if paragraphs else "Sin descripción."
-                img = content.get("thumbnail", {}).get("source")
-                self.result_api.controls.append(ft.Text(content.get("title"), size=30, color="amber", weight="bold"))
-                if img: self.result_api.controls.append(ft.Image(src=img, width=250, border_radius=10))
-                self.result_api.controls.append(ft.Container(content=ft.Text(desc, text_align="justify", color="white", size=16), padding=20, bgcolor="black", border_radius=15, width=550))
-        except Exception as ex:
-            self.result_api.controls.append(ft.Text(f"Error: {ex}", color="red"))
-        self.page.update()
+
 
     def volver_inicio(self):
         self.page.clean()
@@ -546,4 +528,4 @@ def main(page: ft.Page):
     red_social(page)
     page.scroll = ft.ScrollMode.AUTO
     page.window.icon = "logo.ico"  
-ft.app(target=main)
+ft.app(target=main,view=ft.AppView.WEB_BROWSER)
