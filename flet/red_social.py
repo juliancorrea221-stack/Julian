@@ -162,13 +162,13 @@ class red_social:
     def abrir_nueva_ventana(self, e):
         self.page.clean()
         self.info_inicio = ft.Container(visible=True, content=self.inicio())
-        self.info_servicios = ft.Container(visible=False, content=self.servicios())
-        self.info_resumen = ft.Container(visible=False, content=self.resumen())
+        self.info_justificacion = ft.Container(visible=False, content=self.justificacion())
+        self.info_objetivos = ft.Container(visible=False, content=self.objetivos())
         self.info_creditos = ft.Container(visible=False, content=self.creditos())
         def cambiar_info(index):
             self.info_inicio.visible = (index == 0)
-            self.info_servicios.visible = (index == 1)
-            self.info_resumen.visible = (index == 2)
+            self.info_justificacion.visible = (index == 1)
+            self.info_objetivos.visible = (index == 2)
             self.info_creditos.visible = (index == 3)
             self.page.update()
 
@@ -183,8 +183,8 @@ class red_social:
                 ft.Row(  
                     [
                         ft.TextButton("Inicio", on_click=lambda _: cambiar_info(0), style=ft.ButtonStyle(color="white")),
-                        ft.TextButton("Servicios", on_click=lambda _: cambiar_info(1), style=ft.ButtonStyle(color="white")),
-                        ft.TextButton("Resumen", on_click=lambda _: cambiar_info(2), style=ft.ButtonStyle(color="white")),
+                        ft.TextButton("Justificación", on_click=lambda _: cambiar_info(1), style=ft.ButtonStyle(color="white")),
+                        ft.TextButton("Objetivos", on_click=lambda _: cambiar_info(2), style=ft.ButtonStyle(color="white")),
                         ft.TextButton("Creditos", on_click=lambda _: cambiar_info(3), style=ft.ButtonStyle(color="white")),
                         ft.TextButton("Volver", on_click=lambda _: self.volver_inicio(), style=ft.ButtonStyle(color="white")),
                     ],
@@ -200,8 +200,8 @@ class red_social:
                 controls=[
                     barra_superior,
                     self.info_inicio,
-                    self.info_servicios,
-                    self.info_resumen,
+                    self.info_justificacion,
+                    self.info_objetivos,
                     self.info_creditos,
                 ]
             )
@@ -232,50 +232,40 @@ class red_social:
             ], col={"md": 8.2}, alignment="center"),
         ], vertical_alignment="center")
 
-    def servicios(self):
-        t1, self.bar_html = self.crear_tarjeta("Diseño Web", "html5.svg", 0.25) 
-        t2, self.bar_python = self.crear_tarjeta("Python", "python.svg", 0.6)  
-        t3, self.bar_git = self.crear_tarjeta("Repositorios git", "github.png", 0.65) 
-
+    def justificacion(self):
         return ft.Column([
-            ft.Text("Mis Servicios", size=35, weight="bold", color="green400"),
-            ft.ResponsiveRow([t1, t2, t3]),
+            ft.Text("Justificación", size=35, weight="bold", color="green400"),
+            ft.Text("Se propone el desarrollo de un sistema que permita crear grupos con reglas definidas, donde los miembros deban cumplir con publicaciones periódicas como evidencia de avance."
+            "Este proyecto se justifica académicamente porque:"
+            "-Permite aplicar Programación Orientada a Objetos mediante la creación de clases como Usuario, Grupo, Reto y Publicación."
+            "-Requiere organización por módulos para estructurar correctamente el sistema."
+            "-Implementa una interfaz gráfica mediante Flet."
+            "-Integra validaciones, estructuras de datos y lógica condicional compleja."
+            "-Simula un sistema real con reglas dinámicas y seguimiento."
+            ,size=25, weight="bold", color="white"),
+            ft.Text("Antecedentes", size=35, weight="bold", color="green400"),
+            ft.Text("según (González, 2024) que tuvieron aumentos constantes de uso por medio de Angular y Ionic, fomentando a aumentar el desarrollo de buenos hábitos," \
+            " esto visto como los sistemas de videojuegos logros, recompensas, desafíos donde muchos  son atraídos por esta práctica atractiva, por lo que ahora se dará en"\
+            "un enfoque más beneficioso a largo plazo que solo diversión pura afectando positivamente si se aplica desde un punto tecnológico, psicológica y metodológica.", size=25, weight="bold", color="white"),
+            ft.Container(content=ft.Image(src="antecedentes.png", border_radius=20, fit="cover"), col={"md": 3}, height=400),
             ft.ElevatedButton("Ver inicio", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(0)),
         ], scroll="auto")
     
-    def crear_tarjeta(self, titulo, img_src, porcentaje):
-        barra_progreso = ft.Container(
-            content=ft.Text(f"{int(porcentaje*100)}%", size=10, color="white", weight="bold"),
-            bgcolor="blue300",
-            width=0, 
-            height=15,
-            border_radius=5,
-            alignment=ft.Alignment(0, 0),
-            animate_size=1000, 
-        )      
-        tarjeta = ft.Container(
-            content=ft.Column([
-                ft.Image(src=img_src, width=50, height=50),
-                ft.Text(titulo, weight="bold"),
-                ft.Container( 
-                    content=barra_progreso,
-                    bgcolor="green",
-                    width=200,
-                    height=15,
-                    border_radius=5,
-                )
-            ], horizontal_alignment="center"),
-            bgcolor="green", padding=20, border_radius=10, col={"sm": 4}
-        )
-        return tarjeta, barra_progreso
     
-    def resumen(self):
+    def objetivos(self):
         return ft.Column([
-            ft.Text("Mi Resumen", size=35, weight="bold", color="green400"),
+            ft.Text("Objetivos", size=35, weight="bold", color="green400"),
+            ft.Text("Objetivo general",size=25, weight="bold", color="green400"),
+            ft.Text("Desarrollar un sistema de escritorio que permita la gestión de grupos de disciplina y retos, promoviendo la constancia"
+            "mediante reglas obligatorias de cumplimiento y seguimiento de progreso.",size=25, weight="bold", color="white"),
+            ft.Text("Objetivos específicos",size=25, weight="bold", color="green400"),
+            ft.Text("-Diseñar una estructura basada en Programación Orientada a Objetos.",size=25, weight="bold", color="white"),
+            ft.Text("- Implementar una interfaz gráfica funcional utilizando Flet.",size=25, weight="bold", color="white"),
+            ft.Text("- Organizar las funciones independientes para mejorar la estructura del código.", size=25, weight="bold", color="white"),
             ft.Row([ft.Image(src="flet.svg", width=40,color="white"), ft.Image(src="tkinter.svg", width=25,color="white"), ft.Text("Crear interfaces gráficas en python con Flet y Tkinter.", size=18, color="white")]),
             ft.Row([ft.Image(src="algoritmo.png", width=40,color="white"), ft.Text("Comprendimiento de los algoritmos", size=18, color="white")]),
             ft.Row([ft.Image(src="html5.svg", width=40,color="white"), ft.Image(src="github.png", width=40), ft.Text("Gestión de versiones", size=18, color="white")]),
-            ft.ElevatedButton("Ver servicios", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(1)),
+            ft.ElevatedButton("Ver justificación", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(1)),
         ], spacing=20)
     def creditos(self):
         return ft.Column([
