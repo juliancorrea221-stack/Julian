@@ -214,12 +214,12 @@ class red_social:
         return ft.ResponsiveRow([
             ft.Column([
                 ft.Text("Sistema de gestión de grupos y disciplina", size=45, weight="bold", color="green400"),
-                ft.Text("Introducción", size=20, color="white"),
+                ft.Text("Introducción", size=20, color="green400"),
                 ft.Text("Actualmente muchos jóvenes les cuesta mas trabajo mentalmente para desarrollar disciplina" \
                 "con lo que  desarrollare una aplicación tipo red social donde habran grupos en lo que tendran en comun"\
                 "lo que al abarcarse en un entorno positivo dara una emoción de competencia en la que comentaran y"\
                 "subira evidencias para recibir consejos o mensajes positivos, ayudando a largo plazo en un entorno mas adecuado", size=20, color="white"),
-                ft.Text("Problemática", size=20, color="white"),
+                ft.Text("Problemática", size=20, color="green400"),
                 ft.Text("Teniendo en cuenta el anterior contexto,Las plataformas digitales existentes no están diseñadas específicamente para fomentar disciplina"\
                         " mediante reglas obligatorias. No existe un sistema estructurado donde:"\
                         "-Se establezcan compromisos periódicos."\
@@ -228,12 +228,15 @@ class red_social:
                         "-Se fomente la competencia saludable dentro de reglas claras."\
                         "Por lo tanto, se plantea el desarrollo de un sistema que permita crear grupos donde los participantes deban subir evidencias"\
                         "de progreso en intervalos definidos", size=20, color="white"),
-                ft.ElevatedButton("Entrar al Github", bgcolor="green", color="white", on_click=abrir_github)
+                ft.ElevatedButton("Entrar al Github", bgcolor="green", color="white", on_click=abrir_github),
             ], col={"md": 8.2}, alignment="center"),
         ], vertical_alignment="center")
 
     def justificacion(self):
-        return ft.Column([
+        def abrir_fuentes(e):
+            webbrowser.open_new_tab("https://revistas.utb.edu.ec/index.php/magazine/article/view/3671/3325")
+        return ft.ResponsiveRow([
+            ft.Column([
             ft.Text("Justificación", size=35, weight="bold", color="green400"),
             ft.Text("Se propone el desarrollo de un sistema que permita crear grupos con reglas definidas, donde los miembros deban cumplir con publicaciones periódicas como evidencia de avance."
             "Este proyecto se justifica académicamente porque:"
@@ -248,6 +251,7 @@ class red_social:
             " esto visto como los sistemas de videojuegos logros, recompensas, desafíos donde muchos  son atraídos por esta práctica atractiva, por lo que ahora se dará en"\
             "un enfoque más beneficioso a largo plazo que solo diversión pura afectando positivamente si se aplica desde un punto tecnológico, psicológica y metodológica.", size=25, weight="bold", color="white"),
             ft.Container(content=ft.Image(src="antecedentes.png", border_radius=20, fit="cover"), col={"md": 3}, height=400),
+            ft.ElevatedButton("Fuentes", bgcolor="green", color="white", on_click=abrir_fuentes)],col={"md": 8.2}, alignment="center"),
             ft.ElevatedButton("Ver inicio", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(0)),
         ], scroll="auto")
     
@@ -321,7 +325,11 @@ class red_social:
     def build_inicio(self):
         return ft.Column([
             ft.Text("Bienvenido a Focus Routine", size=30, weight="bold", color="green400"),
-            ft.Row([ft.Image(src="uribista.png", width=60), ft.Text("Contenido principal cargado.", size=18, color="white")]),
+            ft.Text("Se trata de una de un programa donde simula una experiencia"\
+            "de una red social, tiene algunos conceptos como unirse a un grupo,"\
+            "iniciar/cerrar sesión, crear un usuario y contraseña, creditos, actualmente"\
+            "es solamente un protipo basico de lo que se espera de una red social real", size=25, weight="bold", color="white"),
+            ft.Row([ft.Image(src="grupo.png", width=300),]),
         ], spacing=20)
 
     def build_retos(self):
