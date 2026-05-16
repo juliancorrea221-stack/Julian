@@ -92,14 +92,14 @@ class red_social:
             self.user_tf,
             self.pass_tf,
 
-            ft.ElevatedButton(
+            ft.Button(
                 "Entrar",
                 on_click=validar,
                 bgcolor="green",
                 color="white"
             ),
 
-            ft.ElevatedButton(
+            ft.Button(
                 "Crear cuenta",color="white",bgcolor="green",
                 on_click=ir_registro
             )
@@ -152,7 +152,7 @@ class red_social:
             nuevo_user,
             nueva_pass,
 
-            ft.ElevatedButton(
+            ft.Button(
                 "Registrarse",color="white",bgcolor="green",
                 on_click=crear_cuenta
             )
@@ -228,7 +228,7 @@ class red_social:
                         "-Se fomente la competencia saludable dentro de reglas claras."\
                         "Por lo tanto, se plantea el desarrollo de un sistema que permita crear grupos donde los participantes deban subir evidencias"\
                         "de progreso en intervalos definidos", size=20, color="white"),
-                ft.ElevatedButton("Entrar al Github", bgcolor="green", color="white", on_click=abrir_github),
+                ft.Button("Entrar al Github", bgcolor="green", color="white", on_click=abrir_github),
             ], col={"md": 8.2}, alignment="center"),
         ], vertical_alignment="center")
 
@@ -251,8 +251,8 @@ class red_social:
             " esto visto como los sistemas de videojuegos logros, recompensas, desafíos donde muchos  son atraídos por esta práctica atractiva, por lo que ahora se dará en"\
             "un enfoque más beneficioso a largo plazo que solo diversión pura afectando positivamente si se aplica desde un punto tecnológico, psicológica y metodológica.", size=25, weight="bold", color="white"),
             ft.Container(content=ft.Image(src="antecedentes.png", border_radius=20, fit="cover"), col={"md": 3}, height=400),
-            ft.ElevatedButton("Fuentes", bgcolor="green", color="white", on_click=abrir_fuentes)],col={"md": 8.2}, alignment="center"),
-            ft.ElevatedButton("Ver inicio", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(0)),
+            ft.Button("Fuentes", bgcolor="green", color="white", on_click=abrir_fuentes)],col={"md": 8.2}, alignment="center"),
+            ft.Button("Ver inicio", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(0)),
         ], scroll="auto")
     
     
@@ -269,7 +269,7 @@ class red_social:
             ft.Row([ft.Image(src="flet.svg", width=40,color="white"), ft.Image(src="tkinter.svg", width=25,color="white"), ft.Text("Crear interfaces gráficas en python con Flet y Tkinter.", size=18, color="white")]),
             ft.Row([ft.Image(src="algoritmo.png", width=40,color="white"), ft.Text("Comprendimiento de los algoritmos", size=18, color="white")]),
             ft.Row([ft.Image(src="html5.svg", width=40,color="white"), ft.Image(src="github.png", width=40), ft.Text("Gestión de versiones", size=18, color="white")]),
-            ft.ElevatedButton("Ver justificación", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(1)),
+            ft.Button("Ver justificación", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(1)),
         ], spacing=20)
     def creditos(self):
         return ft.Column([
@@ -347,7 +347,7 @@ class red_social:
             lista.controls.append(
                 ft.Row([
                     ft.Text(reto["nombre"], color="white"),
-                    ft.ElevatedButton(
+                    ft.Button(
                         "Completar",
                         on_click=lambda e, r=reto: completar(r),
                         bgcolor="green",color="white",
@@ -380,7 +380,7 @@ class red_social:
                                     size=12
                                 )
                             ]),
-                            ft.ElevatedButton(
+                            ft.Button(
                                 "Lleno" if lleno else "Unirse",
                                 disabled=lleno,
                                 bgcolor="grey" if lleno else "green",
@@ -511,8 +511,8 @@ class red_social:
     def build_perfil(self):
         return ft.Column([
             ft.Text("Perfil", size=30, weight="bold",color="green400"),
-            ft.ElevatedButton("Créditos", on_click=self.abrir_nueva_ventana,bgcolor="green",color="white"),
-            ft.ElevatedButton("Cerrar Sesión", on_click=lambda _: self.mostrar_login(),bgcolor="green", color="white")
+            ft.Button("Créditos", on_click=self.abrir_nueva_ventana,bgcolor="green",color="white"),
+            ft.Button("Cerrar Sesión", on_click=lambda _: self.mostrar_login(),bgcolor="green", color="white")
         ])
     
     def cambiar_pagina(self, index):
@@ -526,4 +526,4 @@ def main(page: ft.Page):
     red_social(page)
     page.scroll = ft.ScrollMode.AUTO
     page.window.icon = "logo.ico"  
-ft.app(target=main,view=ft.AppView.WEB_BROWSER)
+ft.run(main,view=ft.AppView.WEB_BROWSER)
