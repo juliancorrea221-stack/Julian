@@ -3,55 +3,131 @@ import random
 import webbrowser
 import requests
 import re
+import sqlite3
+from flask import Flask, request, jsonify
+import threading
+
+# =========================
+# BASE DE DATOS SQLITE
+# =========================
+
+def conectar_db():
+    conn = sqlite3.connect("red_social.db", check_same_thread=False)
+    cursor = conn.cursor()
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS usuarios(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        usuario TEXT UNIQUE NOT NULL,
+        contraseña TEXT NOT NULL
+    )
+    """)
+    conn.commit()
+    return conn, cursor
+conn, cursor = conectar_db()
+try:
+    cursor.execute(
+        "INSERT INTO usuarios(usuario, contraseña) VALUES(?, ?)",
+        ("1", "2")
+    )
+    conn.commit()
+except:
+    pass
+app = Flask(__name__)
+@app.route("/login", methods=["POST"])
+
+def login():
+    data = request.json
+    usuario = data.get("usuario")
+    clave = data.get("clave")
+    cursor.execute(
+        "SELECT * FROM usuarios WHERE usuario=? AND contraseña=?",
+        (usuario, clave)
+    )
+    resultado = cursor.fetchone()
+    if resultado:
+        return jsonify({
+            "success": True,
+            "mensaje": "Login correcto"
+        })
+    return jsonify({
+        "success": False,
+        "mensaje": "Datos incorrectos"
+    })
+@app.route("/registro", methods=["POST"])
+
+def registro():
+    data = request.json
+    usuario = data.get("usuario")
+    clave = data.get("clave")
+    try:
+        cursor.execute(
+            "INSERT INTO usuarios(usuario, contraseña) VALUES(?, ?)",
+            (usuario, clave)
+        )
+        conn.commit()
+        return jsonify({
+            "success": True,
+            "mensaje": "Cuenta creada"
+        })
+    except:
+        return jsonify({
+            "success": False,
+            "mensaje": "Usuario ya existe"
+        })
+
+def iniciar_flask():
+    app.run(port=5000)
+threading.Thread(target=iniciar_flask, daemon=True).start()
+
+# =========================
+# APP FLET
+# =========================
 
 class red_social:
     def __init__(self, page: ft.Page):
         self.page = page
         self.page.padding = 0
         self.page.title = "Focus routine"
-        self.page.theme_mode = ft.ThemeMode.DARK     
+        self.page.theme_mode = ft.ThemeMode.DARK
         self.page.bgcolor = "black"
         self.color_primaria = "black"
         self.color_secundaria = "green800"
-        self.usuarios = {
-            "1": "2"
-        }
-        self.result_creditos = ft.Column(horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+        self.result_creditos = ft.Column(
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+        )
         self.grupo_actual = None
         self.grupos_disponibles = [
-        {"nombre": "Fitness Hardcore", "miembros": 3, "capacidad": 5},
-        {"nombre": "Programadores Python", "miembros": 5, "capacidad": 5},
-        {"nombre": "Gamers Colombia", "miembros": 2, "capacidad": 5},
-        {"nombre": "Lectura diaria", "miembros": 1, "capacidad": 5},
-            ]
+            {"nombre": "Fitness Hardcore", "miembros": 3, "capacidad": 5},
+            {"nombre": "Programadores Python", "miembros": 5, "capacidad": 5},
+            {"nombre": "Gamers Colombia", "miembros": 2, "capacidad": 5},
+            {"nombre": "Lectura diaria", "miembros": 1, "capacidad": 5},
+        ]
         self.usuario = {
-        "nombre": "Tú",
-        "puntos": 0,
-        "retos_completados": 0
+            "nombre": "Tú",
+            "puntos": 0,
+            "retos_completados": 0
+
         }
         self.retos = [
-        {"nombre": "Entrenar 1 hora", "puntos": 10},
-        {"nombre": "Leer 20 páginas", "puntos": 5},
-        {"nombre": "Despertar 5AM", "puntos": 15},
+            {"nombre": "Entrenar 1 hora", "puntos": 10},
+            {"nombre": "Leer 20 páginas", "puntos": 5},
+            {"nombre": "Despertar 5AM", "puntos": 15},
         ]
         self.ultimo_usuario = None
-        self.usuario_en_grupo = False       
+        self.usuario_en_grupo = False
         self.mostrar_login()
-
 
     def mostrar_login(self):
         self.page.clean()
         self.page.vertical_alignment = "center"
         self.page.horizontal_alignment = "center"
         self.page.bgcolor = "black"
-
         self.user_tf = ft.TextField(
             label="Usuario",
             width=300,
             border_color="green",
             color="white"
         )
-
         self.pass_tf = ft.TextField(
             label="Contraseña",
             password=True,
@@ -63,19 +139,35 @@ class red_social:
         def validar(e):
             usuario = self.user_tf.value
             clave = self.pass_tf.value
-            
-            if usuario in self.usuarios and self.usuarios[usuario] == clave:
-
-                self.page.vertical_alignment = "start"
-                self.page.horizontal_alignment = "start"
-
-                self.page.clean()
-
-                self.build_ui()
+            try:
+                respuesta = requests.post(
+                    "http://127.0.0.1:5000/login",
+                    json={
+                        "usuario": usuario,
+                        "clave": clave
+                    }
+                )
+                datos = respuesta.json()
+                if datos["success"]:
+                    self.page.vertical_alignment = "start"
+                    self.page.horizontal_alignment = "start"
+                    self.page.clean()
+                    self.build_ui()
+                else:
+                    self.page.snack_bar = ft.SnackBar(
+                        ft.Text("Usuario o contraseña incorrectos")
+                    )
+                    self.page.snack_bar.open = True
+                    self.page.update()
+            except Exception as error:
+                self.page.snack_bar = ft.SnackBar(
+                    ft.Text(f"Error servidor: {error}")
+                )
+                self.page.snack_bar.open = True
+                self.page.update()
 
         def ir_registro(e):
             self.mostrar_registro()
-
         self.page.add(
             ft.Text(
                 "Focus Routine",
@@ -83,24 +175,22 @@ class red_social:
                 weight="bold",
                 color="green"
             ),
-
             ft.Text(
                 "Inicia sesión para continuar",
                 color="white"
             ),
-
             self.user_tf,
             self.pass_tf,
-
             ft.Button(
                 "Entrar",
                 on_click=validar,
                 bgcolor="green",
                 color="white"
             ),
-
             ft.Button(
-                "Crear cuenta",color="white",bgcolor="green",
+                "Crear cuenta",
+                color="white",
+                bgcolor="green",
                 on_click=ir_registro
             )
         )
@@ -109,14 +199,16 @@ class red_social:
 
     def mostrar_registro(self):
         self.page.clean()
-
         nuevo_user = ft.TextField(
-            label="Nuevo usuario",color="white",border_color="green",
+            label="Nuevo usuario",
+            color="white",
+            border_color="green",
             width=300
         )
-
         nueva_pass = ft.TextField(
-            label="Nueva contraseña",color="white",border_color="green",
+            label="Nueva contraseña",
+            color="white",
+            border_color="green",
             password=True,
             width=300
         )
@@ -124,74 +216,113 @@ class red_social:
         def crear_cuenta(e):
             usuario = nuevo_user.value
             clave = nueva_pass.value
-
-            if usuario in self.usuarios:
-
-                self.page.snack_bar = ft.SnackBar(
-                    ft.Text("Ese usuario ya existe")
+            try:
+                respuesta = requests.post(
+                    "http://127.0.0.1:5000/registro",
+                    json={
+                        "usuario": usuario,
+                        "clave": clave
+                    }
                 )
-
-            else:
-                self.usuarios[usuario] = clave
-
+                datos = respuesta.json()
                 self.page.snack_bar = ft.SnackBar(
-                    ft.Text("Cuenta creada correctamente")
+                    ft.Text(datos["mensaje"])
                 )
-
-                self.mostrar_login()
-
-            self.page.snack_bar.open = True
-            self.page.update()
-
+                self.page.snack_bar.open = True
+                if datos["success"]:
+                    self.mostrar_login()
+                self.page.update()
+            except Exception as error:
+                self.page.snack_bar = ft.SnackBar(
+                    ft.Text(f"Error: {error}")
+                )
+                self.page.snack_bar.open = True
+                self.page.update()
         self.page.add(
             ft.Text(
-                "Crear Cuenta",color="green400",
+                "Crear Cuenta",
+                color="green400",
                 size=30
             ),
-
             nuevo_user,
             nueva_pass,
-
             ft.Button(
-                "Registrarse",color="white",bgcolor="green",
+                "Registrarse",
+                color="white",
+                bgcolor="green",
                 on_click=crear_cuenta
             )
         )
-
         self.page.update()
+
     def abrir_nueva_ventana(self, e):
         self.page.clean()
-        self.info_inicio = ft.Container(visible=True, content=self.inicio())
-        self.info_justificacion = ft.Container(visible=False, content=self.justificacion())
-        self.info_objetivos = ft.Container(visible=False, content=self.objetivos())
-        self.info_creditos = ft.Container(visible=False, content=self.creditos())
+        self.info_inicio = ft.Container(
+            visible=True,
+            content=self.inicio()
+        )
+        self.info_justificacion = ft.Container(
+            visible=False,
+            content=self.justificacion()
+        )
+        self.info_objetivos = ft.Container(
+            visible=False,
+            content=self.objetivos()
+        )
+        self.info_creditos = ft.Container(
+            visible=False,
+            content=self.creditos()
+        )
+
         def cambiar_info(index):
             self.info_inicio.visible = (index == 0)
             self.info_justificacion.visible = (index == 1)
             self.info_objetivos.visible = (index == 2)
             self.info_creditos.visible = (index == 3)
             self.page.update()
-
         barra_superior = ft.Container(
-        padding=15,
-        bgcolor=self.color_secundaria,
-        expand=True,  
-        content=ft.Row(
-            [
-                ft.Text("Información del Proyecto", color="white", size=20),
-
-                ft.Row(  
-                    [
-                        ft.TextButton("Inicio", on_click=lambda _: cambiar_info(0), style=ft.ButtonStyle(color="white")),
-                        ft.TextButton("Justificación", on_click=lambda _: cambiar_info(1), style=ft.ButtonStyle(color="white")),
-                        ft.TextButton("Objetivos", on_click=lambda _: cambiar_info(2), style=ft.ButtonStyle(color="white")),
-                        ft.TextButton("Creditos", on_click=lambda _: cambiar_info(3), style=ft.ButtonStyle(color="white")),
-                        ft.TextButton("Volver", on_click=lambda _: self.volver_inicio(), style=ft.ButtonStyle(color="white")),
-                    ],
-                    alignment=ft.MainAxisAlignment.END
-                )
-            ],
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN 
+            padding=15,
+            bgcolor=self.color_secundaria,
+            expand=True,
+            content=ft.Row(
+                [
+                    ft.Text(
+                        "Información del Proyecto",
+                        color="white",
+                        size=20
+                    ),
+                    ft.Row(
+                        [
+                            ft.TextButton(
+                                "Inicio",
+                                on_click=lambda _: cambiar_info(0),
+                                style=ft.ButtonStyle(color="white")
+                            ),
+                            ft.TextButton(
+                                "Justificación",
+                                on_click=lambda _: cambiar_info(1),
+                                style=ft.ButtonStyle(color="white")
+                            ),
+                            ft.TextButton(
+                                "Objetivos",
+                                on_click=lambda _: cambiar_info(2),
+                                style=ft.ButtonStyle(color="white")
+                            ),
+                            ft.TextButton(
+                                "Creditos",
+                                on_click=lambda _: cambiar_info(3),
+                                style=ft.ButtonStyle(color="white")
+                            ),
+                            ft.TextButton(
+                                "Volver",
+                                on_click=lambda _: self.volver_inicio(),
+                                style=ft.ButtonStyle(color="white")
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.END
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN
             )
         )
         self.page.add(
@@ -207,6 +338,7 @@ class red_social:
             )
         )
         self.page.update()
+
     def inicio(self):
         def abrir_github(e):
              webbrowser.open_new_tab("https://github.com/juliancorrea221-stack/Julian")
@@ -254,8 +386,7 @@ class red_social:
             ft.Button("Fuentes", bgcolor="green", color="white", on_click=abrir_fuentes)],col={"md": 8.2}, alignment="center"),
             ft.Button("Ver inicio", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(0)),
         ], scroll="auto")
-    
-    
+
     def objetivos(self):
         return ft.Column([
             ft.Text("Objetivos", size=35, weight="bold", color="green400"),
@@ -271,26 +402,45 @@ class red_social:
             ft.Row([ft.Image(src="html5.svg", width=40,color="white"), ft.Image(src="github.png", width=40), ft.Text("Gestión de versiones", size=18, color="white")]),
             ft.Button("Ver justificación", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(1)),
         ], spacing=20)
+    
     def creditos(self):
         return ft.Column([
            ft.Text("Creditos", size=35,weight="bold", color="green400"),
-           ft.Text("Julian Fernando Correa Cardozo", size=25,weight="bold", color="green400"),
+           ft.Text("Julian Fernando Correa Cardozo", size=25,weight="bold", color="white"),
            ft.Container(content=ft.Image(src="yo.png", border_radius=20, fit="cover"), col={"md": 3}, height=400),
            ft.Row([ft.Image(src="gmail.svg", width=40,color="green"), ft.Text("Correo: juliancorrea221@gmail.com", size=20, color="white")]),
            ft.Row([ft.Image(src="telefono.svg", width=40,color="green"), ft.Text("Numero: 3158399438", size=20, color="white")])
         ], horizontal_alignment="center", scroll="auto")
 
-
-
     def volver_inicio(self):
         self.page.clean()
-        self.build_ui() 
-    
+        self.build_ui()
+
     def build_ui(self):
-        self.frame_inicio = ft.Container(expand=True, padding=20, visible=True, content=self.build_inicio())
-        self.frame_retos = ft.Container(expand=True, padding=20, visible=False, content=self.build_retos())
-        self.frame_grupos = ft.Container(expand=True, padding=20, visible=False, content=self.build_grupos())
-        self.frame_perfil = ft.Container(expand=True, padding=20, visible=False, content=self.build_perfil())  
+        self.frame_inicio = ft.Container(
+            expand=True,
+            padding=20,
+            visible=True,
+            content=self.build_inicio()
+        )
+        self.frame_retos = ft.Container(
+            expand=True,
+            padding=20,
+            visible=False,
+            content=self.build_retos()
+        )
+        self.frame_grupos = ft.Container(
+            expand=True,
+            padding=20,
+            visible=False,
+            content=self.build_grupos()
+        )
+        self.frame_perfil = ft.Container(
+            expand=True,
+            padding=20,
+            visible=False,
+            content=self.build_perfil()
+        )
         layout = ft.Column(
             expand=True,
             spacing=0,
@@ -299,13 +449,22 @@ class red_social:
                     padding=15,
                     bgcolor=self.color_secundaria,
                     content=ft.Row([
-                        ft.Text("Interfaz", color="white", weight="bold", size=20),
+                        ft.Text(
+                            "Interfaz",
+                            color="white",
+                            weight="bold",
+                            size=20
+                        ),
                         ft.Row([
-                            ft.TextButton("Inicio", on_click=lambda _: self.cambiar_pagina(0), style=ft.ButtonStyle(color="white")),
-                            ft.TextButton("Retos", on_click=lambda _: self.cambiar_pagina(1), style=ft.ButtonStyle(color="white")),
-                            ft.TextButton("Grupos", on_click=lambda _: self.cambiar_pagina(2), style=ft.ButtonStyle(color="white")),
-                            ft.TextButton("Perfil", on_click=lambda _: self.cambiar_pagina(3), style=ft.ButtonStyle(color="white")),
-                        ]),
+                            ft.TextButton( "Inicio",on_click=lambda _: self.cambiar_pagina(0)
+                            ,style=ft.ButtonStyle(color="white")),
+                            ft.TextButton("Retos",on_click=lambda _: self.cambiar_pagina(1),
+                            style=ft.ButtonStyle(color="white")),
+                            ft.TextButton("Grupos",on_click=lambda _: self.cambiar_pagina(2),
+                            style=ft.ButtonStyle(color="white")),
+                            ft.TextButton("Perfil",on_click=lambda _: self.cambiar_pagina(3),
+                            style=ft.ButtonStyle(color="white")),
+                        ])
                     ], alignment="spaceBetween")
                 ),
                 ft.Container(
@@ -320,8 +479,8 @@ class red_social:
             ]
         )
         self.page.add(layout)
-        self.page.update() 
-    
+        self.page.update()
+
     def build_inicio(self):
         return ft.Column([
             ft.Text("Bienvenido a Focus Routine", size=30, weight="bold", color="green400"),
@@ -525,5 +684,5 @@ class red_social:
 def main(page: ft.Page):
     red_social(page)
     page.scroll = ft.ScrollMode.AUTO
-    page.window.icon = "logo.ico"  
-ft.run(main,view=ft.AppView.WEB_BROWSER)
+    page.window.icon = "logo.ico"
+ft.run(main, view=ft.AppView.WEB_BROWSER)
