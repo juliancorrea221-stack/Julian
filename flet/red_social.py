@@ -2,7 +2,6 @@ import flet as ft
 import random
 import webbrowser
 import requests
-import re
 import sqlite3
 from flask import Flask, request, jsonify
 import threading
@@ -383,8 +382,8 @@ class red_social:
             " esto visto como los sistemas de videojuegos logros, recompensas, desafíos donde muchos  son atraídos por esta práctica atractiva, por lo que ahora se dará en"\
             "un enfoque más beneficioso a largo plazo que solo diversión pura afectando positivamente si se aplica desde un punto tecnológico, psicológica y metodológica.", size=25, weight="bold", color="white"),
             ft.Container(content=ft.Image(src="antecedentes.png", border_radius=20, fit="cover"), col={"md": 3}, height=400),
-            ft.Button("Fuentes", bgcolor="green", color="white", on_click=abrir_fuentes)],col={"md": 8.2}, alignment="center"),
-            ft.Button("Ver inicio", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(0)),
+            ft.Button("Fuentes", bgcolor="green", color="white", on_click=abrir_fuentes),
+            ft.Button("Ver inicio", bgcolor="green", color="white", on_click=lambda _: self.cambiar_pagina(0))],col={"md": 8.2}, alignment="center"),
         ], scroll="auto")
 
     def objetivos(self):
